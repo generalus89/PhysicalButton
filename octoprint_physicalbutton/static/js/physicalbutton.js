@@ -128,8 +128,8 @@ $(function() {
                 return false;
 
             //disable used input GPIOs
-            if (self.buttons().find(b => b.gpio() === item))
-                return true;
+            //if (self.buttons().find(b => b.gpio() === item))
+            //    return true;
 
             //disable used output GPIOs
             if (self.buttons().find(b => b.activities().find(a => a.type() === 'output' && a.execute.gpio() === item)))
