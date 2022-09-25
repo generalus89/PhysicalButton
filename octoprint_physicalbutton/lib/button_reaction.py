@@ -46,7 +46,7 @@ def thread_react(pressed_button):
         already_waited += 1
         if activeButton < buttons.len and already_waited >= buttons[activeButton+1]:
             activeButton += 1
-            button = buttons[activeButton
+            button = buttons[activeButton]
         time.sleep(1)
 
     if pressed_button.value == button_value:
