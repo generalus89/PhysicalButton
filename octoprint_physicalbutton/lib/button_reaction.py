@@ -15,7 +15,7 @@ def react_to_input(pressed_button):
     t = threading.Thread(target=thread_react, args=(pressed_button,))
     t.start()
     
-def getWaitTime(elem)
+def getWaitTime(elem):
     return elem.get('buttonTime')
 
 
