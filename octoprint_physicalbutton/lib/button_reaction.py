@@ -14,26 +14,40 @@ from .activities.system import run_system
 def react_to_input(pressed_button):
     t = threading.Thread(target=thread_react, args=(pressed_button,))
     t.start()
+    
+def getWaitTime(elem)
+    return elem.get('buttonTime')
 
 
 def thread_react(pressed_button):
     # save value of button (pushed or released)
     button_value = pressed_button.value
+    buttons = []
 
     # search for pressed button
     for btn in bg.plugin._settings.get(["buttons"]):
         if btn.get('gpio') == "none":
             continue
-        if int(btn.get('gpio')) == pressed_button.pin.number:
-            button = btn
+        if int(btn.get('gpio')) == pressed_button.pin.number and (button.get('enabledWhilePrinting') or not bg.plugin._printer.is_printing()):
+            buttons.append(btn)
             break
 
-    if not button.get('enabledWhilePrinting') and bg.plugin._printer.is_printing():
+    if buttons.len == 0:
         bg.plugin._logger.debug(f"The button is configured to not react while printing")
         return
 
-    wait_time = int(button.get('buttonTime'))
-    time.sleep(wait_time / 1000)
+    buttons.sort(key=getWaitTime)
+    already_waited = 0
+    activeButton = 0
+    button = buttons[activeButton]
+    wait_time = int(buttons[buttons.len-1].get('buttonTime'))
+    
+    while pressed_button.value == button_value:
+        already_waited++
+        if activeButton < buttons.len && already_waited >= buttons[activeButton+1]:
+            activeButton++
+            button = buttons[activeButton
+        time.sleep(1)
 
     if pressed_button.value == button_value:
         bg.plugin._logger.debug(f"Reacting to button {button.get('buttonName')}")
