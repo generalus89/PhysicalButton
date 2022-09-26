@@ -35,6 +35,7 @@ def thread_react(pressed_button):
     if buttons.len == 0:
         bg.plugin._logger.debug(f"The button is configured to not react while printing")
         return
+    bg.plugin._logger.debug(f"Found '{buttons.len}' button for GPIO pin '{pressed_button.pin.number}'")
 
     buttons.sort(key=getWaitTime)
     already_waited = 0
@@ -50,6 +51,7 @@ def thread_react(pressed_button):
             button = buttons[activeButton]
         time.sleep(1)
 
+    bg.plugin._logger.debug(f"Waited '{already_waited}'s")
     bg.plugin._logger.debug(f"Reacting to button {button.get('buttonName')}")
     # execute actions for button in order
     for activity in button.get('activities'):
