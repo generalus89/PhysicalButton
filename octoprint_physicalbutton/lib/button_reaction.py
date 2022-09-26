@@ -16,7 +16,7 @@ def react_to_input(pressed_button):
     t.start()
     
 def getWaitTime(elem):
-    return elem.get('buttonTime')
+    return int(elem.get('buttonTime'))
 
 
 def thread_react(pressed_button):
@@ -43,46 +43,46 @@ def thread_react(pressed_button):
     wait_time = int(buttons[buttons.len-1].get('buttonTime'))
     
     while pressed_button.value == button_value:
+        bg.plugin._logger.debug(f"Button '{pressed_button.pin.number}' still in state '{pressed_button.value}'")
         already_waited += 1
         if activeButton < buttons.len and already_waited >= buttons[activeButton+1]:
             activeButton += 1
             button = buttons[activeButton]
         time.sleep(1)
 
-    if pressed_button.value == button_value:
-        bg.plugin._logger.debug(f"Reacting to button {button.get('buttonName')}")
-        # execute actions for button in order
-        for activity in button.get('activities'):
-            exit_code = 0
-            bg.plugin._logger.debug(f"Sending activity with identifier '{activity.get('identifier')}' ...")
-            if activity.get('type') == "action":
-                exit_code = send_action(activity.get('execute'))
-            elif activity.get('type') == "gcode":
-                exit_code = send_gcode(activity.get('execute'))
-            elif activity.get('type') == "system":
-                exit_code = run_system(activity.get('execute'))
-            elif activity.get('type') == "file":
-                exit_code = select_file(activity.get('execute'))
-            elif activity.get('type') == "output":
-                exit_code = generate_output(activity.get('execute'))
-            elif activity.get('type') == "plugin":
-                exit_code = send_plugin_action(activity.get('execute'))
-            else:
-                bg.plugin._logger.debug(
-                    f"The activity with identifier '{activity.get('identifier')}' is not known (yet)!")
-                continue
+    bg.plugin._logger.debug(f"Reacting to button {button.get('buttonName')}")
+    # execute actions for button in order
+    for activity in button.get('activities'):
+        exit_code = 0
+        bg.plugin._logger.debug(f"Sending activity with identifier '{activity.get('identifier')}' ...")
+        if activity.get('type') == "action":
+            exit_code = send_action(activity.get('execute'))
+        elif activity.get('type') == "gcode":
+            exit_code = send_gcode(activity.get('execute'))
+        elif activity.get('type') == "system":
+            exit_code = run_system(activity.get('execute'))
+        elif activity.get('type') == "file":
+            exit_code = select_file(activity.get('execute'))
+        elif activity.get('type') == "output":
+            exit_code = generate_output(activity.get('execute'))
+        elif activity.get('type') == "plugin":
+            exit_code = send_plugin_action(activity.get('execute'))
+        else:
+            bg.plugin._logger.debug(
+                f"The activity with identifier '{activity.get('identifier')}' is not known (yet)!")
+            continue
 
-            # Check if an executed activity failed
-            if exit_code == 0:
-                bg.plugin._logger.debug(
-                    f"The activity with identifier '{activity.get('identifier')}' was executed successfully!")
-                continue
-            if exit_code == -1:
-                bg.plugin._logger.error(f"The activity with identifier '{activity.get('identifier')}' failed! "
-                                        f"Aborting following activities!")
-                break
-            if exit_code == -2:
-                bg.plugin._logger.error(
-                    f"The activity with identifier '{activity.get('identifier')}' failed! "
-                    f"No GPIO specified!")
-                continue
+        # Check if an executed activity failed
+        if exit_code == 0:
+            bg.plugin._logger.debug(
+                f"The activity with identifier '{activity.get('identifier')}' was executed successfully!")
+            continue
+        if exit_code == -1:
+            bg.plugin._logger.error(f"The activity with identifier '{activity.get('identifier')}' failed! "
+                                    f"Aborting following activities!")
+            break
+        if exit_code == -2:
+            bg.plugin._logger.error(
+                f"The activity with identifier '{activity.get('identifier')}' failed! "
+                f"No GPIO specified!")
+            continue
